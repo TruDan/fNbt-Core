@@ -1,0 +1,34 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.26403.3
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CoreFNBT", "CoreFNBT\CoreFNBT.csproj", "{0FF4C9B3-BD18-4BA0-97CE-84469791F279}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CoreFNBT.Serialization", "CoreFNBT.Serialization\CoreFNBT.Serialization.csproj", "{DA51004C-F53C-43A2-B021-861C7AE3DD5A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CoreFNBT.Test", "CoreFNBT.Test\CoreFNBT.Test.csproj", "{1FEDAF61-70FE-4CAD-A72B-E9B5D4610D09}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{0FF4C9B3-BD18-4BA0-97CE-84469791F279}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0FF4C9B3-BD18-4BA0-97CE-84469791F279}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0FF4C9B3-BD18-4BA0-97CE-84469791F279}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0FF4C9B3-BD18-4BA0-97CE-84469791F279}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DA51004C-F53C-43A2-B021-861C7AE3DD5A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DA51004C-F53C-43A2-B021-861C7AE3DD5A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DA51004C-F53C-43A2-B021-861C7AE3DD5A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DA51004C-F53C-43A2-B021-861C7AE3DD5A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1FEDAF61-70FE-4CAD-A72B-E9B5D4610D09}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1FEDAF61-70FE-4CAD-A72B-E9B5D4610D09}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1FEDAF61-70FE-4CAD-A72B-E9B5D4610D09}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1FEDAF61-70FE-4CAD-A72B-E9B5D4610D09}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
