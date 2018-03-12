@@ -15,7 +15,12 @@ namespace fNbt.Serialization {
                 return new int[0];
             } else if (type == typeof(byte[])) {
                 return new byte[0];
-            } else if (type.IsArray) {
+            }
+            else if (type == typeof(long[]))
+            {
+	            return new long[0];
+            }
+            else if (type.IsArray) {
                 return Activator.CreateInstance(type);
             } else {
                 throw new ArgumentException();
@@ -43,11 +48,18 @@ namespace fNbt.Serialization {
                 Type elementType = type.GetElementType();
                 if (IsSafelyConvertibleToByte(elementType)) {
                     return TypeCategory.ByteArray;
-                } else if (IsSafelyConvertibleToInt(elementType)) {
-                    return TypeCategory.IntArray;
-                } else {
-                    return TypeCategory.Array;
+                } else if (IsSafelyConvertibleToInt(elementType))
+                {
+	                return TypeCategory.IntArray;
                 }
+                else if (IsSafelyConvertibleToLong(elementType))
+                {
+	                return TypeCategory.LongArray;
+                }
+                else
+	            {
+		            return TypeCategory.Array;
+	            }
             } else if (GetStringIDictionaryImpl(type) != null) {
                 return TypeCategory.IDictionary;
             } else if (GetGenericInterfaceImpl(type, typeof(IList<>)) != null) {
@@ -67,6 +79,7 @@ namespace fNbt.Serialization {
                    (type.GetTypeInfo().IsPrimitive || type.GetTypeInfo().IsEnum ||
                     type == typeof(byte[]) ||
                     type == typeof(int[]) ||
+					type == typeof(long[]) ||
                     type == typeof(string));
         }
 
@@ -89,7 +102,8 @@ namespace fNbt.Serialization {
             { typeof(double), typeof(NbtDouble) },
             { typeof(byte[]), typeof(NbtByteArray) },
             { typeof(int[]), typeof(NbtIntArray) },
-            { typeof(string), typeof(NbtString) }
+            { typeof(string), typeof(NbtString) },
+	        { typeof(long[]), typeof(NbtLongArray) }
         };
 
 
@@ -104,7 +118,8 @@ namespace fNbt.Serialization {
             { typeof(NbtShort), NbtTagType.Short },
             { typeof(NbtString), NbtTagType.String },
             { typeof(NbtCompound), NbtTagType.Compound },
-            { typeof(NbtList), NbtTagType.List }
+            { typeof(NbtList), NbtTagType.List },
+	        { typeof(NbtLongArray), NbtTagType.LongArray }
         };
 
 
@@ -219,7 +234,8 @@ namespace fNbt.Serialization {
             { typeof(NbtList), () => new NbtList() },
             { typeof(NbtLong), () => new NbtLong() },
             { typeof(NbtShort), () => new NbtShort() },
-            { typeof(NbtString), () => new NbtString() }
+            { typeof(NbtString), () => new NbtString() },
+	        {typeof(NbtLongArray), () => new NbtLongArray() }
         };
 
 
@@ -254,7 +270,11 @@ namespace fNbt.Serialization {
                     } else if (IsSafelyConvertibleToInt(elementType)) {
                         return typeof(NbtIntArray);
                     }
-                }
+                    else if (IsSafelyConvertibleToLong(elementType))
+                    {
+	                    return typeof(NbtLongArray);
+                    }
+				}
                 // Arrays cannot fit into byte[]/int[] -- use a list instead.
                 return typeof(NbtList);
             }
@@ -288,9 +308,18 @@ namespace fNbt.Serialization {
         }
 
 
-        /// <summary> Creates a blank tag of a type appropriate for serializing values of given type. </summary>
-        /// <returns> A blank NbtTag -OR- null if given valueType already derives from NbtTag. </returns>
-        [CanBeNull]
+	    static bool IsSafelyConvertibleToLong([NotNull] Type valueType)
+	    {
+		    if (valueType == null) throw new ArgumentNullException("valueType");
+		    return valueType == typeof(bool) ||
+		           valueType == typeof(byte) || valueType == typeof(sbyte) ||
+		           valueType == typeof(short) || valueType == typeof(ushort) ||
+		           valueType == typeof(int) || valueType == typeof(uint) || valueType == typeof(long);
+	    }
+
+		/// <summary> Creates a blank tag of a type appropriate for serializing values of given type. </summary>
+		/// <returns> A blank NbtTag -OR- null if given valueType already derives from NbtTag. </returns>
+		[CanBeNull]
         public static NbtTag ConstructTag([NotNull] Type valueType) {
             Type tagType = FindTagTypeForValue(valueType);
             if (tagType != null) {

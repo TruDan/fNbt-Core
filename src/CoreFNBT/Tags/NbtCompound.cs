@@ -290,7 +290,11 @@ namespace fNbt.Tags {
                         newTag = new NbtIntArray();
                         break;
 
-                    default:
+	                case NbtTagType.LongArray:
+		                newTag = new NbtLongArray();
+		                break;
+
+					default:
                         throw new NbtFormatException("Unsupported tag type found in NBT_Compound: " + nextTag);
                 }
                 newTag.Parent = this;
@@ -357,7 +361,11 @@ namespace fNbt.Tags {
                         newTag = new NbtIntArray();
                         break;
 
-                    default:
+	                case NbtTagType.LongArray:
+		                newTag = new NbtLongArray();
+		                break;
+
+					default:
                         throw new NbtFormatException("Unsupported tag type found in NBT_Compound: " + nextTag);
                 }
                 readStream.SkipString();
