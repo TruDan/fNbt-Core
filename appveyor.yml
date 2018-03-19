@@ -3,6 +3,14 @@ image: Visual Studio 2017
 branches:
   only:
   - master
+dotnet_csproj:
+  patch: true
+  file: '**\*.csproj'
+  version: '{version}'
+  package_version: '{version}'
+  assembly_version: '{version}'
+  file_version: '{version}'
+  informational_version: '{version}'
 init:
   # Best practice (Windows line endings different to Unix/Linux)
   - cmd: git config --global core.autocrlf true
@@ -15,10 +23,10 @@ before_build:
   - cmd: dotnet restore ./src/CoreFNBT.Serialization/CoreFNBT.Serialization.csproj --verbosity m
   - cmd: dotnet restore ./src/CoreFNBT.Test/CoreFNBT.Test.csproj --verbosity m
 build_script:
-    - cmd: dotnet build ./src/CoreFNBT/CoreFNBT.csproj -c Release
-    - cmd: dotnet pack ./src/CoreFNBT/CoreFNBT.csproj -c Release /p:PackageVersion=1.0.{build} 
-    - cmd: dotnet build ./src/CoreFNBT.Serialization/CoreFNBT.Serialization.csproj -c Release
-    - cmd: dotnet pack ./src/CoreFNBT.Serialization/CoreFNBT.Serialization.csproj -c Release /p:PackageVersion=1.0.{build} 
+  - cmd: dotnet build ./src/CoreFNBT/CoreFNBT.csproj -c Release
+  - cmd: dotnet pack ./src/CoreFNBT/CoreFNBT.csproj -c Release /p:PackageVersion=1.0.{build} 
+  - cmd: dotnet build ./src/CoreFNBT.Serialization/CoreFNBT.Serialization.csproj -c Release
+  - cmd: dotnet pack ./src/CoreFNBT.Serialization/CoreFNBT.Serialization.csproj -c Release /p:PackageVersion=1.0.{build} 
 artifacts:
 - path: ./src/**/bin/Release/*.nupkg
   name: NuGet
@@ -26,4 +34,4 @@ deploy:
 - provider: NuGet
   api_key:
     secure: xOnejg7iw7MjF2DdCNi3fqauM8R5P15xmwa8zD7nFNKM/avGsGDwXqsPTRbvEMx9
-  skip_symbols: true
+  skip_symbols: false
