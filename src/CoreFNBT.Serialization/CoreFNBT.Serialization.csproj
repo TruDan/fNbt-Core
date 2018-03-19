@@ -3,10 +3,28 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <RootNamespace>fNbt.Serialization</RootNamespace>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <PackageId>CoreFNBT.Serialization</PackageId>
+    <Authors>TruDan, kennyvv</Authors>
+    <Company>TruDan, kennyvv</Company>
+    <Description>A port of fNbt to .NET Standard / .NET Core</Description>
+    <PackageProjectUrl>https://github.com/TruDan/fNbt-Core</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/TruDan/fNbt-Core.git</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageTags>nbt, minecraft</PackageTags>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <LangVersion>latest</LangVersion>
+    <DebugType>pdbonly</DebugType>
+    <DebugSymbols>true</DebugSymbols>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="JetBrains.Annotations" Version="11.1.0" />
+    <PackageReference Include="Microsoft.CSharp" Version="4.4.1" />
+    <PackageReference Include="System.Dynamic.Runtime" Version="4.3.0" />
   </ItemGroup>
 
   <ItemGroup>

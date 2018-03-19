@@ -3,6 +3,17 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <RootNamespace>fNbt</RootNamespace>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+    <Authors>TruDan, kennyvv</Authors>
+    <Product>CoreFNBT</Product>
+    <Company />
+    <PackageId>CoreFNBT</PackageId>
+    <Description>A port of fNbt to .NET Standard / .NET Core</Description>
+    <PackageProjectUrl>https://github.com/TruDan/fNbt-Core</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/TruDan/fNbt-Core.git</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageTags>nbt, minecraft</PackageTags>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
