@@ -24,9 +24,9 @@ before_build:
   - cmd: dotnet restore ./src/CoreFNBT.Test/CoreFNBT.Test.csproj --verbosity m
 build_script:
   - cmd: dotnet build ./src/CoreFNBT/CoreFNBT.csproj -c Release
-  - cmd: dotnet pack ./src/CoreFNBT/CoreFNBT.csproj -c Release /p:PackageVersion=1.0.{build} 
+  - cmd: dotnet pack ./src/CoreFNBT/CoreFNBT.csproj -c Release /p:PackageVersion=1.0.%APPVEYOR_BUILD_NUMBER%
   - cmd: dotnet build ./src/CoreFNBT.Serialization/CoreFNBT.Serialization.csproj -c Release
-  - cmd: dotnet pack ./src/CoreFNBT.Serialization/CoreFNBT.Serialization.csproj -c Release /p:PackageVersion=1.0.{build} 
+  - cmd: dotnet pack ./src/CoreFNBT.Serialization/CoreFNBT.Serialization.csproj -c Release /p:PackageVersion=1.0.%APPVEYOR_BUILD_NUMBER%
 artifacts:
 - path: ./src/**/bin/Release/*.nupkg
   name: NuGet
