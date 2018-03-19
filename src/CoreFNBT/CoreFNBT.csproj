@@ -11,13 +11,17 @@
     <PackageId>CoreFNBT</PackageId>
     <Description>A port of fNbt to .NET Standard / .NET Core</Description>
     <PackageProjectUrl>https://github.com/TruDan/fNbt-Core</PackageProjectUrl>
-    <RepositoryUrl>https://github.com/TruDan/fNbt-Core.git</RepositoryUrl>
+    <RepositoryUrl>https://github.com/TruDan/fNbt-Core</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageTags>nbt, minecraft</PackageTags>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
 
   <ItemGroup>

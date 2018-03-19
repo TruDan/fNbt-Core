@@ -9,7 +9,7 @@
     <Company>TruDan, kennyvv</Company>
     <Description>A port of fNbt to .NET Standard / .NET Core</Description>
     <PackageProjectUrl>https://github.com/TruDan/fNbt-Core</PackageProjectUrl>
-    <RepositoryUrl>https://github.com/TruDan/fNbt-Core.git</RepositoryUrl>
+    <RepositoryUrl>https://github.com/TruDan/fNbt-Core</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageTags>nbt, minecraft</PackageTags>
   </PropertyGroup>
@@ -18,6 +18,10 @@
     <LangVersion>latest</LangVersion>
     <DebugType>pdbonly</DebugType>
     <DebugSymbols>true</DebugSymbols>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
 
