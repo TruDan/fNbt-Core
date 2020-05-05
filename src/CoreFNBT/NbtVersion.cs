@@ -1,7 +1,8 @@
 ﻿namespace fNbt
 {
-    public enum NbtFileVersion
+    public enum NbtVersion
     {
+        AutoDetect,
         Legacy,
         V7,
         V8
