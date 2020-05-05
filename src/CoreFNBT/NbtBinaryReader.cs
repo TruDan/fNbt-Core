@@ -32,12 +32,23 @@ namespace fNbt {
             return (NbtTagType)type;
         }
 
-
         public override short ReadInt16() {
             if (swapNeeded) {
                 return Swap(base.ReadInt16());
             } else {
                 return base.ReadInt16();
+            }
+        }
+
+        public override ushort ReadUInt16()
+        {
+            if (swapNeeded)
+            {
+                return Swap(base.ReadUInt16());
+            }
+            else
+            {
+                return base.ReadUInt16();
             }
         }
 
@@ -90,12 +101,12 @@ namespace fNbt {
 
 
         public override string ReadString() {
-            short length;
+            ushort length;
 	        if (UseVarInt) {
 				length = ReadByte();
 			}
 			else {
-				length = ReadInt16();
+				length = ReadUInt16();
 			}
 			if (length < 0) {
                 throw new NbtFormatException("Negative string length given!");
@@ -171,6 +182,17 @@ namespace fNbt {
         static short Swap(short v) {
             unchecked {
                 return (short)((v >> 8) & 0x00FF |
+                               (v << 8) & 0xFF00);
+            }
+        }
+
+
+        [DebuggerStepThrough]
+        static ushort Swap(ushort v)
+        {
+            unchecked
+            {
+                return (ushort)((v >> 8) & 0x00FF |
                                (v << 8) & 0xFF00);
             }
         }
