@@ -95,7 +95,7 @@ namespace fNbt.Test {
             using (var ms = new MemoryStream(fileBytes)) {
                 using (var nss = new NonSeekableStream(ms)) {
                     var file = new NbtFile();
-                    long length = file.LoadFromStream(nss, NbtCompression.None, null);
+                    long length = file.LoadFromStream(nss, NbtCompression.None, NbtVersion.Legacy, null);
                     TestFiles.AssertNbtBigFile(file);
                     Assert.AreEqual(length, new FileInfo(TestFiles.Big).Length);
                 }
@@ -104,6 +104,20 @@ namespace fNbt.Test {
 
         #endregion
 
+        #region Loading Bedrock Test Files
+
+        [Test]
+        public void TestNbtBedrockV8LevelDatLoading()
+        {
+            var file = new NbtFile(TestFiles.BedrockV8LevelDat);
+            Assert.AreEqual(TestFiles.BedrockV8LevelDat, file.FileName);
+
+            Assert.AreEqual(NbtCompression.None, file.FileCompression);
+            Assert.AreEqual(NbtVersion.V8, file.FileVersion);
+            TestFiles.AssertNbtBedrockV8LevelDatFile(file);
+        }
+
+        #endregion
 
         [Test]
         public void TestNbtSmallFileSavingUncompressed() {
@@ -173,9 +187,9 @@ namespace fNbt.Test {
                     ms.Position = 0;
                     Assert.Throws<NotSupportedException>(() => loadedFile.LoadFromStream(nss, NbtCompression.AutoDetect));
                     ms.Position = 0;
-                    Assert.Throws<InvalidDataException>(() => loadedFile.LoadFromStream(nss, NbtCompression.ZLib));
+                    Assert.Throws<InvalidDataException>(() => loadedFile.LoadFromStream(nss, NbtCompression.ZLib, NbtVersion.Legacy));
                     ms.Position = 0;
-                    long bytesRead = loadedFile.LoadFromStream(nss, NbtCompression.None);
+                    long bytesRead = loadedFile.LoadFromStream(nss, NbtCompression.None, NbtVersion.Legacy);
                     Assert.AreEqual(bytesWritten, bytesRead);
                     TestFiles.AssertNbtBigFile(loadedFile);
                 }

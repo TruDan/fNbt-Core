@@ -72,7 +72,26 @@ namespace fNbt {
         }
 
 
-	    public void Write(int value) {
+        public void Write(ushort value)
+        {
+            unchecked
+            {
+                if (swapNeeded)
+                {
+                    buffer[0] = (byte)(value >> 8);
+                    buffer[1] = (byte)value;
+                }
+                else
+                {
+                    buffer[0] = (byte)value;
+                    buffer[1] = (byte)(value >> 8);
+                }
+            }
+            stream.Write(buffer, 0, 2);
+        }
+
+
+        public void Write(int value) {
 		    if (UseVarInt) {
 			    WriteVarInt(value);
 		    } else {
@@ -189,12 +208,17 @@ namespace fNbt {
             }
 
             // Write out string length (as number of bytes)
+            if(Encoding.GetByteCount(value) > 32767)
+            {
+                throw new NbtFormatException("Strings longer than 32767 bytes cannot be written.");
+            }
+
             int numBytes = Encoding.GetByteCount(value);
 	        if (UseVarInt) {
 				Write((byte)numBytes);
 			}
 			else {
-				Write((short)numBytes);
+				Write((ushort)numBytes);
 			}
 
 			if (numBytes <= BufferSize) {
@@ -214,7 +238,7 @@ namespace fNbt {
 	                char[] pChars = value.ToCharArray();
 	                byte[] pBytes = buffer;
                         {
-	                        byteLen = encoder.GetBytes(pChars, 0, charCount, pBytes, 0, charCount == numLeft);
+	                        byteLen = encoder.GetBytes(pChars, charStart, charCount, pBytes, 0, charCount == numLeft);
                             //byteLen = encoder.GetBytes(pChars + charStart, charCount, pBytes, BufferSize,
                             //                           charCount == numLeft);
                         }

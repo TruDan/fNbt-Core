@@ -12,6 +12,7 @@ namespace fNbt.Test {
         public static readonly string Big = Path.Combine(DirName, "bigtest.nbt");
         public static readonly string BigGZip = Path.Combine(DirName, "bigtest.nbt.gz");
         public static readonly string BigZLib = Path.Combine(DirName, "bigtest.nbt.z");
+        public static readonly string BedrockV8LevelDat = Path.Combine(DirName, "bedrockv8level.dat");
 
 
         // creates a compound containing lists of every kind of tag
@@ -293,6 +294,21 @@ namespace fNbt.Test {
             }
         }
 
+        public static void AssertNbtBedrockV8LevelDatFile(NbtFile file)
+        {
+            // This is a pretty much default file created by Bedrock Edition in April 2020.
+            Assert.IsInstanceOf<NbtCompound>(file.RootTag);
+
+            NbtCompound root = file.RootTag;
+            Assert.AreEqual(String.Empty, root.Name);
+            Assert.AreEqual(86, root.Count);
+
+            Assert.IsInstanceOf<NbtByte>(root["CenterMapsToOrigin"]);
+
+            var node = (NbtByte)root["CenterMapsToOrigin"];
+            Assert.AreEqual("CenterMapsToOrigin", node.Name);
+            Assert.AreEqual(0xFF, node.Value);
+        }
 
         #region Value test
 

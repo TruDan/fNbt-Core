@@ -24,6 +24,8 @@ namespace fNbt {
         /// Defaults to AutoDetect. </summary>
         public NbtCompression FileCompression { get; private set; }
 
+        public NbtVersion FileVersion { get; private set; }
+
         /// <summary> Root tag of this file. Must be a named CompoundTag. Defaults to an empty-named tag. </summary>
         /// <exception cref="ArgumentException"> If given tag is unnamed. </exception>
         [NotNull]
@@ -219,29 +221,67 @@ namespace fNbt {
             }
         }
 
-
         /// <summary> Loads NBT data from a stream. Existing <c>RootTag</c> will be replaced </summary>
-        /// <param name="stream"> Stream from which data will be loaded. If compression is set to AutoDetect, this stream must support seeking. </param>
+        /// <param name="stream"> Stream from which data will be loaded. If compression or file version is set to AutoDetect, this stream must support seeking. </param>
         /// <param name="compression"> Compression method to use for loading/saving this file. </param>
         /// <param name="selector"> Optional callback to select which tags to load into memory. Root may not be skipped.
         /// No reference is stored to this callback after loading (don't worry about implicitly captured closures). May be <c>null</c>. </param>
         /// <returns> Number of bytes read from the stream. </returns>
         /// <exception cref="ArgumentNullException"> <paramref name="stream"/> is <c>null</c>. </exception>
         /// <exception cref="ArgumentOutOfRangeException"> If an unrecognized/unsupported value was given for <paramref name="compression"/>. </exception>
-        /// <exception cref="NotSupportedException"> If <paramref name="compression"/> is set to AutoDetect, but the stream is not seekable. </exception>
+        /// <exception cref="NotSupportedException"> If <paramref name="compression"/> or <paramref name="fileVersion"/> is set to AutoDetect, but the stream is not seekable. </exception>
         /// <exception cref="EndOfStreamException"> If file ended earlier than expected. </exception>
         /// <exception cref="InvalidDataException"> If file compression could not be detected, decompressing failed, or given stream does not support reading. </exception>
         /// <exception cref="NbtFormatException"> If an error occurred while parsing data in NBT format. </exception>
-        public long LoadFromStream([NotNull] Stream stream, NbtCompression compression, [CanBeNull] TagSelector selector) {
+        public long LoadFromStream([NotNull] Stream stream, NbtCompression compression, [CanBeNull] TagSelector selector)
+        {
+            return LoadFromStream(stream, compression, NbtVersion.AutoDetect, selector);
+
+        }
+
+        /// <summary> Loads NBT data from a stream. Existing <c>RootTag</c> will be replaced </summary>
+        /// <param name="stream"> Stream from which data will be loaded. If compression or file version is set to AutoDetect, this stream must support seeking. </param>
+        /// <param name="compression"> Compression method to use for loading/saving this file. </param>
+        /// <param name="version"> Version of the file. </param>
+        /// <param name="selector"> Optional callback to select which tags to load into memory. Root may not be skipped.
+        /// No reference is stored to this callback after loading (don't worry about implicitly captured closures). May be <c>null</c>. </param>
+        /// <returns> Number of bytes read from the stream. </returns>
+        /// <exception cref="ArgumentNullException"> <paramref name="stream"/> is <c>null</c>. </exception>
+        /// <exception cref="ArgumentOutOfRangeException"> If an unrecognized/unsupported value was given for <paramref name="compression"/>. </exception>
+        /// <exception cref="NotSupportedException"> If <paramref name="compression"/> or <paramref name="fileVersion"/> is set to AutoDetect, but the stream is not seekable. </exception>
+        /// <exception cref="EndOfStreamException"> If file ended earlier than expected. </exception>
+        /// <exception cref="InvalidDataException"> If file compression could not be detected, decompressing failed, or given stream does not support reading. </exception>
+        /// <exception cref="NbtFormatException"> If an error occurred while parsing data in NBT format. </exception>
+        public long LoadFromStream([NotNull] Stream stream, NbtCompression compression, NbtVersion version, [CanBeNull] TagSelector selector) {
             if (stream == null) throw new ArgumentNullException("stream");
 
             FileName = null;
 
-            // detect compression, based on the first byte
-            if (compression == NbtCompression.AutoDetect) {
-                FileCompression = DetectCompression(stream);
-            } else {
-                FileCompression = compression;
+            if (version == NbtVersion.AutoDetect)
+            {
+                FileVersion = DetectVersion(stream);
+            }
+            else
+            {
+                FileVersion = version;
+            }
+
+            if (FileVersion == NbtVersion.Legacy)
+            {
+                // detect compression, based on the first byte
+                if (compression == NbtCompression.AutoDetect)
+                {
+                    FileCompression = DetectCompression(stream);
+                }
+                else
+                {
+                    FileCompression = compression;
+                }
+            }
+            else
+            {
+                FileCompression = NbtCompression.None;
+                BigEndian = false;
             }
 
             // prepare to count bytes read
@@ -305,8 +345,26 @@ namespace fNbt {
         /// <exception cref="InvalidDataException"> If file compression could not be detected, decompressing failed, or given stream does not support reading. </exception>
         /// <exception cref="NbtFormatException"> If an error occurred while parsing data in NBT format. </exception>
         public long LoadFromStream([NotNull] Stream stream, NbtCompression compression) {
-            return LoadFromStream(stream, compression, null);
+            return LoadFromStream(stream, compression, NbtVersion.AutoDetect);
         }
+
+
+        /// <summary> Loads NBT data from a stream. Existing <c>RootTag</c> will be replaced </summary>
+        /// <param name="stream"> Stream from which data will be loaded. If compression is set to AutoDetect, this stream must support seeking. </param>
+        /// <param name="compression"> Compression method to use for loading/saving this file. </param>
+        /// <param name="version"> Version of the file. </param>
+        /// <returns> Number of bytes read from the stream. </returns>
+        /// <exception cref="ArgumentNullException"> <paramref name="stream"/> is <c>null</c>. </exception>
+        /// <exception cref="ArgumentOutOfRangeException"> If an unrecognized/unsupported value was given for <paramref name="compression"/>. </exception>
+        /// <exception cref="NotSupportedException"> If <paramref name="compression"/> or <paramref name="version"/> is set to AutoDetect, but the stream is not seekable. </exception>
+        /// <exception cref="EndOfStreamException"> If file ended earlier than expected. </exception>
+        /// <exception cref="InvalidDataException"> If file compression could not be detected, decompressing failed, or given stream does not support reading. </exception>
+        /// <exception cref="NbtFormatException"> If an error occurred while parsing data in NBT format. </exception>
+        public long LoadFromStream([NotNull] Stream stream, NbtCompression compression, NbtVersion version)
+        {
+            return LoadFromStream(stream, compression, version, null);
+        }
+
 
 
         static NbtCompression DetectCompression([NotNull] Stream stream) {
@@ -340,9 +398,42 @@ namespace fNbt {
             return compression;
         }
 
+        static NbtVersion DetectVersion([NotNull] Stream stream)
+        {
+            NbtVersion version = NbtVersion.Legacy;
+            if (!stream.CanSeek)
+            {
+                throw new NotSupportedException("Cannot detect file version on a stream that's not seekable.");
+            }
+            int firstByte = stream.ReadByte();
+            switch (firstByte)
+            {
+                case -1:
+                    throw new EndOfStreamException();
+
+                case 0x07:
+                    version = NbtVersion.V7;
+                    break;
+
+                case 0x08:
+                    version = NbtVersion.V8;
+                    break;
+
+                default:
+                    version = NbtVersion.Legacy;
+                    break;
+            }
+
+            stream.Seek(-1, SeekOrigin.Current);
+            return version;
+        }
 
         void LoadFromStreamInternal([NotNull] Stream stream, [CanBeNull] TagSelector tagSelector) {
             // Make sure the first byte in this file is the tag for a TAG_Compound
+            if(FileVersion != NbtVersion.Legacy)
+            {
+                stream.Read(new byte[8], 0, 8);
+            }
             int firstByte = stream.ReadByte();
             if (firstByte < 0) {
                 throw new EndOfStreamException();

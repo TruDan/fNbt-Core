@@ -456,6 +456,27 @@ namespace fNbt.Test {
             }
         }
 
+        /// <summary>
+        /// Test that a string longer than 32767 bytes will not be written (throws exception).
+        /// </summary>
+        [Test]
+        public void WriteTooLongOfString()
+        {
+            using (var ms = new MemoryStream())
+            {
+                StringBuilder builder = new StringBuilder();
+                while(builder.Length < 40000)
+                {
+                    builder.Append(builder.Length.ToString());
+                }
+
+                var writer = new NbtWriter(ms, "root");
+                {
+                    Assert.Throws<NbtFormatException>(() => writer.WriteString(builder.ToString()));
+                }
+            }
+        }
+
 
         static string GenRandomUnicodeString(Random rand) {
             // String length is limited by number of bytes, not characters.

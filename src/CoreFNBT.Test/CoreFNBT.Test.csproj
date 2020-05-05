@@ -1,8 +1,10 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>    
-    <TargetFramework>netcoreapp2.0</TargetFramework>    
-    <RootNamespace>fNbt.Test</RootNamespace>
+    <TargetFramework>netcoreapp3.1</TargetFramework>    
+    <RootNamespace>fNbt.Test</RootNamespace>    
+    <StartupObject></StartupObject>    
+    <OutputType>Library</OutputType>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -11,8 +13,13 @@
 
   <ItemGroup>
     <PackageReference Include="JetBrains.Annotations" Version="11.1.0" />
-    <PackageReference Include="NETStandard.Library" Version="2.0.1" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.6.1" />
+    <PackageReference Include="NETStandard.Library" Version="2.0.3" />
     <PackageReference Include="NUnit" Version="3.9.0" />
+    <PackageReference Include="NUnit3TestAdapter" Version="3.16.1">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
     <PackageReference Include="System.Globalization" Version="4.4.0-beta-24913-02" />
     <PackageReference Include="System.IO.FileSystem" Version="4.4.0-beta-24913-02" />
   </ItemGroup>
@@ -22,6 +29,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="TestFiles\bedrockv8level.dat">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="TestFiles\bigtest.nbt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
