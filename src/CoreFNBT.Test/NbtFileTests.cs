@@ -104,6 +104,20 @@ namespace fNbt.Test {
 
         #endregion
 
+        #region Loading Small Nbt Test File
+
+        [Test]
+        public void TestNbtBedrockV8LevelDatLoading()
+        {
+            var file = new NbtFile(TestFiles.BedrockV8LevelDat);
+            Assert.AreEqual(TestFiles.BedrockV8LevelDat, file.FileName);
+
+            Assert.AreEqual(NbtCompression.None, file.FileCompression);
+            Assert.AreEqual(NbtFileVersion.V8, file.FileVersion);
+            TestFiles.AssertNbtBedrockV8LevelDatFile(file);
+        }
+
+        #endregion
 
         [Test]
         public void TestNbtSmallFileSavingUncompressed() {

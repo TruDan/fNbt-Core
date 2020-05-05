@@ -24,6 +24,8 @@ namespace fNbt {
         /// Defaults to AutoDetect. </summary>
         public NbtCompression FileCompression { get; private set; }
 
+        public NbtFileVersion FileVersion { get; private set; }
+
         /// <summary> Root tag of this file. Must be a named CompoundTag. Defaults to an empty-named tag. </summary>
         /// <exception cref="ArgumentException"> If given tag is unnamed. </exception>
         [NotNull]
@@ -237,11 +239,24 @@ namespace fNbt {
 
             FileName = null;
 
-            // detect compression, based on the first byte
-            if (compression == NbtCompression.AutoDetect) {
-                FileCompression = DetectCompression(stream);
-            } else {
-                FileCompression = compression;
+            FileVersion = DetectVersion(stream);
+
+            if (FileVersion == NbtFileVersion.Legacy)
+            {
+                // detect compression, based on the first byte
+                if (compression == NbtCompression.AutoDetect)
+                {
+                    FileCompression = DetectCompression(stream);
+                }
+                else
+                {
+                    FileCompression = compression;
+                }
+            }
+            else
+            {
+                FileCompression = NbtCompression.None;
+                BigEndian = false;
             }
 
             // prepare to count bytes read
@@ -340,9 +355,42 @@ namespace fNbt {
             return compression;
         }
 
+        static NbtFileVersion DetectVersion([NotNull] Stream stream)
+        {
+            NbtFileVersion version = NbtFileVersion.Legacy;
+            if (!stream.CanSeek)
+            {
+                throw new NotSupportedException("Cannot detect file version on a stream that's not seekable.");
+            }
+            int firstByte = stream.ReadByte();
+            switch (firstByte)
+            {
+                case -1:
+                    throw new EndOfStreamException();
+
+                case 0x07:
+                    version = NbtFileVersion.V7;
+                    break;
+
+                case 0x08:
+                    version = NbtFileVersion.V8;
+                    break;
+
+                default:
+                    version = NbtFileVersion.Legacy;
+                    break;
+            }
+
+            stream.Seek(-1, SeekOrigin.Current);
+            return version;
+        }
 
         void LoadFromStreamInternal([NotNull] Stream stream, [CanBeNull] TagSelector tagSelector) {
             // Make sure the first byte in this file is the tag for a TAG_Compound
+            if(FileVersion != NbtFileVersion.Legacy)
+            {
+                stream.Read(new byte[8], 0, 8);
+            }
             int firstByte = stream.ReadByte();
             if (firstByte < 0) {
                 throw new EndOfStreamException();
