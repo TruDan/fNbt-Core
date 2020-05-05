@@ -104,7 +104,7 @@ namespace fNbt.Test {
 
         #endregion
 
-        #region Loading Small Nbt Test File
+        #region Loading Bedrock Test Files
 
         [Test]
         public void TestNbtBedrockV8LevelDatLoading()
